@@ -68,10 +68,6 @@ class PARCELAMENTO_SIMPLES_NACIONAL_NORMAL {
     }
 }
 
-document.getElementById('uploadBtn').addEventListener('click', () => {
-    document.getElementById('inputFile').click();
-});
-
 function handleFile() {
 
     limparTabelas();
@@ -303,42 +299,6 @@ function calucarParcelasRestantes(pagas, total){
     return total - pagas;
 }
 
-const compSaldoAtual = document.getElementById('compSaldoAtual').children[1].children;
-
-compSaldoAtual[1].children[1].children[0].addEventListener('change', () => {
-
-    if(compSaldoAtual[1].children[1].children[0].value < 0){
-        document.getElementById('notification-modal').style.display = 'flex';
-    }else{
-        closeNotification()
-    }
-
-    compSaldoAtual[2].children[1].textContent = calucarParcelasRestantes(compSaldoAtual[1].children[1].children[0].value,
-    document.getElementById('informacoesDoParcelamento').children[1].children[1].children[1].textContent);
-
-    const saldos = composicaoDosSaldosAtuais(
-        document.getElementById('informacoesDoParcelamento').children[1].children[4].children[1].textContent,
-        compSaldoAtual[0].children[1].children[0].value,
-        compSaldoAtual[1].children[1].children[0].value,
-        document.getElementById('informacoesContabeis').children[1].children[0].children[2].textContent,
-        document.getElementById('informacoesContabeis').children[1].children[3].children[2].textContent,
-        document.getElementById('informacoesDoParcelamento').children[1].children[1].children[1].textContent,
-        document.getElementById('informacoesDoParcelamento').children[1].children[2].children[1].textContent,
-        document.getElementById('informacoesDoParcelamento').children[1].children[3].children[1].textContent
-    )
-
-    compSaldoAtual[3].children[1].textContent = (isNaN(saldos.parcelasCP))? '0x': saldos.parcelasCP + 'x';
-    compSaldoAtual[3].children[2].textContent = toReais(saldos.valorCP);
-
-    if(isNaN(saldos.valorLP) || saldos.valorLP == 0){
-        compSaldoAtual[4].style.display = 'none'
-    }else{
-        compSaldoAtual[4].style.display = ''
-        compSaldoAtual[4].children[1].textContent = saldos.parcelasLP + 'x';
-        compSaldoAtual[4].children[2].textContent = toReais(saldos.valorLP);
-    }
-});
-
 function composicaoDosSaldosAtuais(dataVencto1, dataSaldo, parcelasPagas, valorCP, valorLP, totalParcelas, valorParcela1, valorParcelas){
     valorCP = parseFloat(valorCP.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
     valorLP = parseFloat(valorLP.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
@@ -527,3 +487,44 @@ function confirmarCSV(){
 function closeNotification(){
     document.getElementById('notification-modal').style.display = 'none';
 }
+
+document.getElementById('uploadBtn').addEventListener('click', () => {
+    document.getElementById('inputFile').click();
+});
+
+const compSaldoAtual = document.getElementById('compSaldoAtual').children[1].children;
+
+compSaldoAtual[1].children[1].children[0].addEventListener('change', () => {
+
+    if(compSaldoAtual[1].children[1].children[0].value < 0){
+        document.getElementById('notification-mensage').innerHTML = "Error:<br>O número de parcelas pagas selecionado é menor que 0"
+        document.getElementById('notification-modal').style.display = 'flex';
+    }else{
+        closeNotification()
+    }
+
+    compSaldoAtual[2].children[1].textContent = calucarParcelasRestantes(compSaldoAtual[1].children[1].children[0].value,
+    document.getElementById('informacoesDoParcelamento').children[1].children[1].children[1].textContent);
+
+    const saldos = composicaoDosSaldosAtuais(
+        document.getElementById('informacoesDoParcelamento').children[1].children[4].children[1].textContent,
+        compSaldoAtual[0].children[1].children[0].value,
+        compSaldoAtual[1].children[1].children[0].value,
+        document.getElementById('informacoesContabeis').children[1].children[0].children[2].textContent,
+        document.getElementById('informacoesContabeis').children[1].children[3].children[2].textContent,
+        document.getElementById('informacoesDoParcelamento').children[1].children[1].children[1].textContent,
+        document.getElementById('informacoesDoParcelamento').children[1].children[2].children[1].textContent,
+        document.getElementById('informacoesDoParcelamento').children[1].children[3].children[1].textContent
+    )
+
+    compSaldoAtual[3].children[1].textContent = (isNaN(saldos.parcelasCP))? '0x': saldos.parcelasCP + 'x';
+    compSaldoAtual[3].children[2].textContent = toReais(saldos.valorCP);
+
+    if(isNaN(saldos.valorLP) || saldos.valorLP == 0){
+        compSaldoAtual[4].style.display = 'none'
+    }else{
+        compSaldoAtual[4].style.display = ''
+        compSaldoAtual[4].children[1].textContent = saldos.parcelasLP + 'x';
+        compSaldoAtual[4].children[2].textContent = toReais(saldos.valorLP);
+    }
+});
