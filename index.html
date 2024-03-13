@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <title>Parcelamentos</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <img src="https://sso.contabilizei.com/img/logo-contabilizei.png" alt="Logo Contabilizei">
+            <span class="nav-space">
+            </span>
+            <div id="uploadBtn">
+                <h5 style="display: flex;">
+                    <strong style="margin-right: 5px;">Carregar Arquivo de Parcelamento</strong>
+                    <span class="material-symbols-outlined">enable</span>
+                </h5>
+                <input type="file" id="inputFile" onchange="handleFile()">
+            </div>
+        </nav>
+    </header>
+    <main style="padding: 50px;">
+        <div id="ParcelamentoSimplesNacional" class="Parcelamento">
+            <table id="ParcelamentoSimplesNacional-table">
+                <thead>
+                    <tr>
+                        <th colspan="4" style="background-color: #1c72bb;">
+                            <h2 style="color: white;">Parcelamento Simples Nacional</h2>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <table id="informacoesDaEmpresa">
+                        <thead>
+                            <tr>
+                                <th colspan="2">INFORMAÇÕES DA EMPRESA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nome Empresarial:</td>
+                                <td style="min-width: 200px; outline: none;" contenteditable></td>
+                            </tr>
+                            <tr>
+                                <td>CNPJ:</td>
+                                <td style="outline: none;" contenteditable></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="informacoesDoParcelamento">
+                        <thead>
+                            <tr>
+                                <th colspan="2">INFORMAÇÕES DO PARCELAMENTO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Valor total parcelado:</td>
+                                <td style="min-width: 100px;">
+                                    R$ <input type="number" style="font-size: inherit; outline: none; border: none;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Número de parcelas:</td>
+                                <td style="outline: none;" contenteditable></td>
+                            </tr>
+                            <tr>
+                                <td>Valor da primeira parcela:</td>
+                                <td style="outline: none;" contenteditable></td>
+                            </tr>
+                            <tr>
+                                <td>Valor das demais parcelas:</td>
+                                <td style="outline: none;" contenteditable></td>
+                            </tr>
+                            <tr>
+                                <td>Prazo para pagamento da primeira parcela:</td>
+                                <td style="outline: none;" contenteditable></td>
+                            </tr>
+                            <tr>
+                                <td>Valor Total do Débitos:</td>
+                                <td style="outline: none;" contenteditable></td>
+                            </tr>
+                            <tr>
+                                <td>Valor total do Juros:</td>
+                                <td style="outline: none;" contenteditable></td>
+                            </tr>
+                            <tr>
+                                <td>Data da Solicitação:</td>
+                                <td style="outline: none;" contenteditable></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="informacoesContabeis">
+                        <thead>
+                            <tr>
+                                <th colspan="3">COMPOSIÇÃO CONTÁBIL DO PARCELAMENTO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CURTO PRAZO</td>
+                                <td style="min-width: 100px;"></td>
+                                <td style="min-width: 100px;"></td>
+                            </tr>
+                            <tr>
+                                <td>Débito</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Juros</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>LONGO PRAZO</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Débito</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Juros</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <table id="detalhamentoParcelas">
+                                <thead>
+                                    <tr>
+                                        <td colspan="4">DETALHAMENTO DAS PARCELAS</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>PARCELA</td>
+                                        <td>VALOR TOTAL</td>
+                                        <td>DÉBITO</td>
+                                        <td>JUROS</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Primeira</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Demais</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </tbody>
+                    </table>
+                    <table id="compSaldoAtual">
+                        <thead>
+                            <tr>
+                                <th colspan="3">COMPOSIÇÃO DO SALDO DO PARCELAMENTO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td >DATA DA COMPOSIÇÃO: </td>
+                                <td colspan="2" style="text-align: center;">
+                                    <input type="date" id="dataSaldo" style="font-size: inherit; border: none; outline: none;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span>PARCELAS PAGAS:</span></td>
+                                <td colspan="2">
+                                    <input type="number" class="inputDosNumeros">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>PARCELAS RESTANTES: </td>
+                                <td colspan="2" style="text-align: center; padding-right: 15px;"></td>
+                            </tr>
+                            <tr>
+                                <td>SALDO ATUAL EM CURTO PRAZO:</td>
+                                <td></td>
+                                <td style="text-align: center;"></td>
+                            </tr>
+                            <tr>
+                                <td>SALDO ATUAL EM LONGO PRAZO:</td>
+                                <td></td>
+                                <td style="text-align: center;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="descricaoDosDebitos">
+                        <thead>
+                            <tr>
+                                <th colspan="4">DESCRIÇÃO DOS DÉBITOS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Período de Apuração</td>
+                                <td>Vencimento</td>
+                                <td>Saldo Devedor Original</td>
+                                <td>Valor Atualizado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="anotacoesContador">
+                        <tr>
+                            <td><textarea cols="30" rows="5" placeholder="Anotações do contador" style="border: 0.5px solid gray; width: 100%; padding: 15px; resize: none;"></textarea></td>
+                        </tr>
+                    </table>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <button id="gerarCSV" onclick="gerarCSV()" style="background-color: #1c72bb; color: white; padding: 8px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; display: none;"><strong>Gerar CSV</strong></button>
+            <button id="salvarPDF" onclick="window.print()" style="background-color: #1c72bb; color: white; padding: 8px; border: none; border-radius: 5px; cursor: pointer; margin: 10px;"><strong>Salvar PDF</strong></button>
+        </div>
+        <div id="overlay" style="width: 100vw;  height: 100vh; position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; background-color: rgba(0, 0, 0, 0.200); backdrop-filter: blur(3px); display: none;">
+            <div id="modal" style="width: 60%; min-width: 900px; min-height: 450px; max-height: 500px; background-color: rgba(255, 255, 255, 0.8);backdrop-filter: blur(10px); padding: 50px; border-radius: 5px; overflow: auto; display: flex; align-items: center; flex-direction: column;">
+                <table id="csvDeImportação" style="width: 90%; height: auto;">
+                    <thead>
+                        <tr>
+                            <th>DATA</th>
+                            <th>DESCRICAO</th>
+                            <th>VALOR</th>
+                            <th>CONTA_DEBITO</th>
+                            <th>CONTA_CREDITO</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                    </tbody>
+                </table>
+                <button onclick="confirmarCSV()" style="background-color: #1c72bb; color: white; padding: 8px; border: none; border-radius: 5px; cursor: pointer; margin: 10px;">Confirmar</button>
+            </div>
+        </div>
+        <div id="notification-modal">
+            <span id="mensage">Error: Número de Parcelas menor que 0</span>
+            <span class="material-symbols-outlined" style="margin-left: 15px; cursor: pointer;" onclick="closeNotification()">close</span>
+        </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
