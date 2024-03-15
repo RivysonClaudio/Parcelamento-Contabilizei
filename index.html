@@ -13,10 +13,13 @@
             <img src="https://sso.contabilizei.com/img/logo-contabilizei.png" alt="Logo Contabilizei">
             <span class="nav-space">
             </span>
-            <div id="uploadBtn">
+            <div id="carregarInfo-btn" onclick="carregarInformacoesDoParcelamento()" class="nav-btn">
+                <h5><strong style="color: white;">Preenchido Manualmente</strong></h5>
+            </div>
+            <div id="uploadBtn" class="nav-btn">
                 <h5 style="display: flex;">
                     <strong style="margin-right: 5px;">Carregar Arquivo de Parcelamento</strong>
-                    <span class="material-symbols-outlined">enable</span>
+                    <span class="material-symbols-outlined">file_open</span>
                 </h5>
                 <input type="file" id="inputFile" onchange="handleFile()">
             </div>
@@ -28,7 +31,7 @@
                 <thead>
                     <tr>
                         <th colspan="4" style="background-color: #1c72bb;">
-                            <h2 style="color: white;">Parcelamento Simples Nacional</h2>
+                            <h2 style="color: white;">PARCELAMENTO</h2>
                         </th>
                     </tr>
                 </thead>
@@ -42,11 +45,13 @@
                         <tbody>
                             <tr>
                                 <td>Nome Empresarial:</td>
-                                <td style="min-width: 200px; outline: none;" contenteditable></td>
+                                <td id="razoSocial-input" style="min-width: 200px; outline: none;" contenteditable></td>
                             </tr>
                             <tr>
                                 <td>CNPJ:</td>
-                                <td style="outline: none;" contenteditable></td>
+                                <td>
+                                    <input id="cnpj-input" type="text" style="font-size: inherit; outline: none; border: none;" placeholder="00.000.000/0000-00">
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -60,36 +65,50 @@
                             <tr>
                                 <td>Valor total parcelado:</td>
                                 <td style="min-width: 100px;">
-                                    R$ <input type="number" style="font-size: inherit; outline: none; border: none;">
+                                    R$ <input id="valorTotalParcelado-input" type="text" style="font-size: inherit; outline: none; border: none;" placeholder="0,00">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Número de parcelas:</td>
-                                <td style="outline: none;" contenteditable></td>
+                                <td>
+                                    <input id="qtsParcelas-input" class="inputDosNumeros" type="number" placeholder="00">
+                                </td>
                             </tr>
                             <tr>
                                 <td>Valor da primeira parcela:</td>
-                                <td style="outline: none;" contenteditable></td>
+                                <td style="min-width: 100px;">
+                                    R$ <input id="valorParcela1-input" type="text" style="font-size: inherit; outline: none; border: none;" placeholder="0,00">
+                                </td>
                             </tr>
                             <tr>
                                 <td>Valor das demais parcelas:</td>
-                                <td style="outline: none;" contenteditable></td>
+                                <td style="min-width: 100px;">
+                                    R$ <input id="valorParcelas-input" type="text" style="font-size: inherit; outline: none; border: none;" placeholder="0,00">
+                                </td>
                             </tr>
                             <tr>
                                 <td>Prazo para pagamento da primeira parcela:</td>
-                                <td style="outline: none;" contenteditable></td>
+                                <td style="min-width: 100px;">
+                                    <input id="venctoParcela1-input" type="date" style="font-size: inherit; outline: none; border: none;">
+                                </td>
                             </tr>
                             <tr>
                                 <td>Valor Total do Débitos:</td>
-                                <td style="outline: none;" contenteditable></td>
+                                <td style="min-width: 100px;">
+                                    R$ <input id="debito-input" type="text" style="font-size: inherit; outline: none; border: none;" placeholder="0,00">
+                                </td>
                             </tr>
                             <tr>
                                 <td>Valor total do Juros:</td>
-                                <td style="outline: none;" contenteditable></td>
+                                <td style="min-width: 100px;">
+                                    R$ <input id="juros-input" type="text" style="font-size: inherit; outline: none; border: none;" placeholder="0,00">
+                                </td>
                             </tr>
                             <tr>
                                 <td>Data da Solicitação:</td>
-                                <td style="outline: none;" contenteditable></td>
+                                <td style="min-width: 100px;">
+                                    <input id="aquisicao-input" type="date" style="font-size: inherit; outline: none; border: none;">
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -175,7 +194,7 @@
                             <tr>
                                 <td><span>PARCELAS PAGAS:</span></td>
                                 <td colspan="2">
-                                    <input type="number" class="inputDosNumeros">
+                                    <input type="number" class="inputDosNumeros" style="text-align: center;">
                                 </td>
                             </tr>
                             <tr>
@@ -221,6 +240,8 @@
             <button id="gerarCSV" onclick="gerarCSV()" style="background-color: #1c72bb; color: white; padding: 8px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; display: none;"><strong>Gerar CSV</strong></button>
             <button id="salvarPDF" onclick="window.print()" style="background-color: #1c72bb; color: white; padding: 8px; border: none; border-radius: 5px; cursor: pointer; margin: 10px;"><strong>Salvar PDF</strong></button>
         </div>
+    </main>
+    <footer>
         <div id="overlay" style="width: 100vw;  height: 100vh; position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; background-color: rgba(0, 0, 0, 0.200); backdrop-filter: blur(3px); display: none;">
             <div id="modal" style="width: 60%; min-width: 900px; min-height: 450px; max-height: 500px; background-color: rgba(255, 255, 255, 0.8);backdrop-filter: blur(10px); padding: 50px; border-radius: 5px; overflow: auto; display: flex; align-items: center; flex-direction: column;">
                 <table id="csvDeImportação" style="width: 90%; height: auto;">
@@ -243,7 +264,10 @@
             <span id="notification-mensage"></span>
             <span class="material-symbols-outlined" style="margin-left: 15px; cursor: pointer;" onclick="closeNotification()">close</span>
         </div>
-    </main>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
     <script src="script.js"></script>
 </body>

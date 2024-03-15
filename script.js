@@ -68,6 +68,15 @@ class PARCELAMENTO_SIMPLES_NACIONAL_NORMAL {
     }
 }
 
+$(document).ready(() => {
+    $("#cnpj-input").mask('00.000.000/0000-00', {reverse: true});
+    $("#valorTotalParcelado-input").mask('00.000.000,00', {reverse: true});
+    $("#valorParcela1-input").mask('00.000.000,00', {reverse: true});
+    $("#valorParcelas-input").mask('00.000.000,00', {reverse: true});
+    $("#debito-input").mask('00.000.000,00', {reverse: true});
+    $("#juros-input").mask('00.000.000,00', {reverse: true});
+});
+
 function handleFile() {
 
     limparTabelas();
@@ -135,15 +144,14 @@ function displayText(text) {
         infoEmpresa[0].children[1].textContent = parcelamento.nomeEmpresarial;
         infoEmpresa[1].children[1].textContent = parcelamento.cnpj;
 
-        const infoParcelamento = document.getElementById('informacoesDoParcelamento').children[1].children;
-        infoParcelamento[0].children[1].textContent = 'R$ ' + parcelamento.valor_do_parcelamento;
-        infoParcelamento[1].children[1].textContent = parcelamento.qts_parcelas;
-        infoParcelamento[2].children[1].textContent = 'R$ ' + parcelamento.vlr_parc1;
-        infoParcelamento[3].children[1].textContent = 'R$ ' + parcelamento.vlr_parcs;
-        infoParcelamento[4].children[1].textContent = parcelamento.vencto_parc1;
-        infoParcelamento[5].children[1].textContent = toReais(parcelamento.vlr_debito);
-        infoParcelamento[6].children[1].textContent = toReais(parcelamento.juros);
-        infoParcelamento[7].children[1].textContent = parcelamento.aquisicao;
+        document.getElementById('valorTotalParcelado-input').value = parcelamento.valor_do_parcelamento;
+        document.getElementById('qtsParcelas-input').value = parcelamento.qts_parcelas;
+        document.getElementById('valorParcela1-input').value = parcelamento.vlr_parc1;
+        document.getElementById('valorParcelas-input').value = parcelamento.vlr_parcs;
+        document.getElementById('venctoParcela1-input').value = getDateFormat(parcelamento.vencto_parc1);
+        document.getElementById('debito-input').value = (parcelamento.vlr_debito).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        document.getElementById('juros-input').value = (parcelamento.juros).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        document.getElementById('aquisicao-input').value = getDateFormat(parcelamento.aquisicao);
 
         const descDesbitos = document.getElementById('descricaoDosDebitos');
         parcelamento.debitos.forEach((row) =>{
@@ -159,6 +167,11 @@ function displayText(text) {
         document.getElementById('ParcelamentoSimplesNacional').style.display = 'block';
 
         carregarInformacoesDoParcelamento();
+    }
+
+    function getDateFormat(date){
+        dateNewFormat = date.split('/');
+        return `${dateNewFormat[2]}-${dateNewFormat[1]}-${dateNewFormat[0]}`;
     }
 }
 
@@ -176,24 +189,15 @@ function limparTabelas(){;
 }
 
 function carregarInformacoesDoParcelamento(){
-    const infoParcelamento = document.getElementById('informacoesDoParcelamento').children[1].children;
-
-    const valor_parcelamento_text = String(infoParcelamento[0].children[1].innerHTML.replace(/[^0-9,.]/g, ''));
-    const vlr_debito_text = String(infoParcelamento[5].children[1].innerHTML.replace(/[^0-9,.]/g, ''));
-    const juros_text = String(infoParcelamento[6].children[1].innerHTML.replace(/[^0-9,.]/g, ''));
-    const vencto_parc1 = String(infoParcelamento[4].children[1].innerHTML);
-    const qts_parcelas_text = String(infoParcelamento[1].children[1].innerHTML);
-    const vlr_parc1_text = String(infoParcelamento[2].children[1].innerHTML.replace(/[^0-9,.]/g, ''));
-    const vlr_parcs_text = String(infoParcelamento[3].children[1].innerHTML.replace(/[^0-9,.]/g, ''));
 
     const parcelamento = {
-        valor_do_parcelamento: parseFloat(valor_parcelamento_text.replace('.', '').replace(',', '.')),
-        vlr_debito: parseFloat(vlr_debito_text.replace('.', '').replace(',', '.')),
-        juros: parseFloat(juros_text.replace('.', '').replace(',', '.')),
-        vencto_parc1: vencto_parc1,
-        qts_parcelas: parseInt(qts_parcelas_text.replace('.', '').replace(',', '.')),
-        vlr_parc1: parseFloat(vlr_parc1_text.replace('.', '').replace(',', '.')),
-        vlr_parcs: parseFloat(vlr_parcs_text.replace('.', '').replace(',', '.'))
+        valor_do_parcelamento: parseFloat(document.getElementById('valorTotalParcelado-input').value.replace('.', '').replace(',', '.')),
+        vlr_debito: parseFloat(document.getElementById('debito-input').value.replace('.', '').replace(',', '.')),
+        juros: parseFloat(document.getElementById('juros-input').value.replace('.', '').replace(',', '.')),
+        vencto_parc1: document.getElementById('venctoParcela1-input').value,
+        qts_parcelas: parseInt(document.getElementById('qtsParcelas-input').value.replace('.', '').replace(',', '.')),
+        vlr_parc1: parseFloat(document.getElementById('valorParcela1-input').value.replace('.', '').replace(',', '.')),
+        vlr_parcs: parseFloat(document.getElementById('valorParcelas-input').value.replace('.', '').replace(',', '.'))
     }
 
     const infoContabeis = document.getElementById('informacoesContabeis').children[1].children;
@@ -238,125 +242,60 @@ function carregarInformacoesDoParcelamento(){
     }
 
     carregarDetalhamentoDeParcelas(parcelamento.vlr_parc1, parcelamento.vlr_parcs, ALIQUOTA_DEBITO, ALIQUOTA_JUROS);
-}
 
-function carregarDetalhamentoDeParcelas(vlr_parc1, vlr_parcs, ALIQUOTA_DEBITO, ALIQUOTA_JUROS){
-    const detParcelas = document.getElementById('detalhamentoParcelas').children[1].children;
+    function informacoesDeCurtoLongoPrazo(data, qts_parcelas){
 
-    detParcelas[1].children[1].textContent = toReais(vlr_parc1);
-    detParcelas[1].children[2].textContent = toReais(vlr_parc1 * ALIQUOTA_DEBITO);
-    detParcelas[1].children[3].textContent = toReais(vlr_parc1 * ALIQUOTA_JUROS);
-
-    detParcelas[2].children[1].textContent = toReais(vlr_parcs);
-    detParcelas[2].children[2].textContent = toReais(vlr_parcs * ALIQUOTA_DEBITO);
-    detParcelas[2].children[3].textContent = toReais(vlr_parcs * ALIQUOTA_JUROS);
-}
-
-function informacoesDeCurtoLongoPrazo(data, qts_parcelas){
-
-    const DIA = 1;
-  
-    dataArray = data.split('/')
-    let dataInicioParcelamento = new Date(parseInt(dataArray[2]), parseInt(dataArray[1]) - 1, DIA)
-    let dataFinalCP = new Date(parseInt(dataArray[2]) + 1, 11, 31)
-    let dataFinalLP = new Date(dataInicioParcelamento);
-    dataFinalLP.setMonth(dataInicioParcelamento.getMonth() + parseInt(qts_parcelas) - 1)
-  
-    let dataCP = '';
-    let dataLP = '';
-    let parcelasCP = (dataFinalLP > dataFinalCP)? `${Math.round((dataFinalCP - dataInicioParcelamento) / (1000 * 60 * 60 * 24 * 30.44))}`: parseInt(qts_parcelas);
-    let parcelasLP = 0;
-    let temLP = false;
-  
-    let mesIncioCP = (dataInicioParcelamento.getMonth() + 1 < 10 )? `0${dataInicioParcelamento.getMonth() + 1}`: dataInicioParcelamento.getMonth() + 1;
-    let mesFinalCP = '';
-  
-    if (dataFinalLP > dataFinalCP){
-      mesFinalCP = (dataFinalCP.getMonth() + 1 < 10 )? `0${dataFinalCP.getMonth() + 1}`: dataFinalCP.getMonth() + 1;  
-    }else{
-      mesFinalCP = (dataFinalLP.getMonth() + 1 < 10 )? `0${dataFinalLP.getMonth() + 1}`: dataFinalLP.getMonth() + 1;
-      dataFinalCP = dataFinalLP;
-    }
-  
-    dataCP = `${mesIncioCP}/${dataInicioParcelamento.getFullYear()} - ${mesFinalCP}/${dataFinalCP.getFullYear()}`;
-  
-    if(parseInt(qts_parcelas) > parcelasCP){
-      parcelasLP = qts_parcelas - parcelasCP;
-      let mesFinalLP = (dataFinalLP.getMonth() + 1 < 10 )? `0${dataFinalLP.getMonth() + 1}`: dataFinalLP.getMonth() + 1;
-      dataLP = `01/${dataFinalCP.getFullYear() + 1} - ${mesFinalLP}/${dataFinalLP.getFullYear()}`;
-      temLP = true;
-    }
-  
-    return {emFormatoDeDataCP: dataCP,
-            parcelasCP: parcelasCP,
-            emFormatoDeDataLP: dataLP,
-            parcelasLP: parcelasLP,
-            temLP: temLP
-            }
-}
-
-function calucarParcelasRestantes(pagas, total){
-    return total - pagas;
-}
-
-function composicaoDosSaldosAtuais(dataVencto1, dataSaldo, parcelasPagas, valorCP, valorLP, totalParcelas, valorParcela1, valorParcelas){
-    valorCP = parseFloat(valorCP.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
-    valorLP = parseFloat(valorLP.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
-    valorParcela1 = parseFloat(valorParcela1.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
-    valorParcelas = parseFloat(valorParcelas.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
-    parcelasPagas = parseInt(parcelasPagas);
-    totalParcelas = parseInt(totalParcelas);
-  
-    let parcelas = 1;
-  
-    dataVencto1 = dataVencto1.split('/');
-    dataSaldo = dataSaldo.split('-');
-  
-    parcelas += (dataSaldo[0] > dataVencto1[2])? (dataSaldo[0] - dataVencto1[2]) * 12: 0;
-    parcelas += dataSaldo[1] - dataVencto1[1]
-    parcelas = (parcelas > totalParcelas)? totalParcelas: parcelas;
-
-    const QUANTIDADE_DE_PARCELAS_ATE_O_FIM_DO_PRIMEIRO_ANO = 12 - (dataVencto1[1] - 1);
-
-    if(parcelas > QUANTIDADE_DE_PARCELAS_ATE_O_FIM_DO_PRIMEIRO_ANO && !isNaN(valorLP)){
-      if(valorLP >= (valorParcelas * 12)){
-        valorCP += (valorParcelas * 12);
-        valorLP -= (valorParcelas * 12);
-      }else{
-        valorCP += valorLP;
-        valorLP = 0;
-      }
+        const DIA = 1;
+      
+        dataArray = data.split('-')
+        let dataInicioParcelamento = new Date(parseInt(dataArray[0]), parseInt(dataArray[1]) - 1, DIA)
+        let dataFinalCP = new Date(parseInt(dataArray[0]) + 1, 11, 31)
+        let dataFinalLP = new Date(dataInicioParcelamento);
+        dataFinalLP.setMonth(dataInicioParcelamento.getMonth() + parseInt(qts_parcelas) - 1)
+      
+        let dataCP = '';
+        let dataLP = '';
+        let parcelasCP = (dataFinalLP > dataFinalCP)? `${Math.round((dataFinalCP - dataInicioParcelamento) / (1000 * 60 * 60 * 24 * 30.44))}`: parseInt(qts_parcelas);
+        let parcelasLP = 0;
+        let temLP = false;
+      
+        let mesIncioCP = (dataInicioParcelamento.getMonth() + 1 < 10 )? `0${dataInicioParcelamento.getMonth() + 1}`: dataInicioParcelamento.getMonth() + 1;
+        let mesFinalCP = '';
+      
+        if (dataFinalLP > dataFinalCP){
+          mesFinalCP = (dataFinalCP.getMonth() + 1 < 10 )? `0${dataFinalCP.getMonth() + 1}`: dataFinalCP.getMonth() + 1;  
+        }else{
+          mesFinalCP = (dataFinalLP.getMonth() + 1 < 10 )? `0${dataFinalLP.getMonth() + 1}`: dataFinalLP.getMonth() + 1;
+          dataFinalCP = dataFinalLP;
+        }
+      
+        dataCP = `${mesIncioCP}/${dataInicioParcelamento.getFullYear()} - ${mesFinalCP}/${dataFinalCP.getFullYear()}`;
+      
+        if(parseInt(qts_parcelas) > parcelasCP){
+          parcelasLP = qts_parcelas - parcelasCP;
+          let mesFinalLP = (dataFinalLP.getMonth() + 1 < 10 )? `0${dataFinalLP.getMonth() + 1}`: dataFinalLP.getMonth() + 1;
+          dataLP = `01/${dataFinalCP.getFullYear() + 1} - ${mesFinalLP}/${dataFinalLP.getFullYear()}`;
+          temLP = true;
+        }
+      
+        return {emFormatoDeDataCP: dataCP,
+                parcelasCP: parcelasCP,
+                emFormatoDeDataLP: dataLP,
+                parcelasLP: parcelasLP,
+                temLP: temLP
+                }
     }
 
-    while(!validacaoCP() && !isNaN(valorLP)){
-      if (valorLP >= (valorParcelas * 12)){
-        valorCP += (valorParcelas * 12);
-        valorLP -= (valorParcelas * 12);
-      }else{
-        valorCP += valorLP;
-        valorLP = 0;
-        break;
-      }
-    }
-
-    valorCP -= (parcelasPagas > 0) ? valorParcela1 + (valorParcelas * (parcelasPagas - 1)): 0;
-
-    if(parcelasPagas > parcelas || parcelasPagas < 0){
-        valorCP = 0;
-        valorLP = 0;
-    }
-
-    function validacaoCP(){
-      let CP = (Math.floor(((valorCP - valorParcela1) / valorParcelas) + 1) - QUANTIDADE_DE_PARCELAS_ATE_O_FIM_DO_PRIMEIRO_ANO) / 12;
-      let diferenca = CP - ((parcelas-QUANTIDADE_DE_PARCELAS_ATE_O_FIM_DO_PRIMEIRO_ANO) / 12);
-      return (diferenca < 1)? false: true;
-    }
-  
-    return {
-      valorCP: valorCP,
-      parcelasCP: (parcelasPagas == 0) ? Math.floor((valorCP - valorParcela1) / valorParcelas) + 1: Math.floor(valorCP / valorParcelas),
-      valorLP: valorLP,
-      parcelasLP: Math.floor(valorLP / valorParcelas)
+    function carregarDetalhamentoDeParcelas(vlr_parc1, vlr_parcs, ALIQUOTA_DEBITO, ALIQUOTA_JUROS){
+        const detParcelas = document.getElementById('detalhamentoParcelas').children[1].children;
+    
+        detParcelas[1].children[1].textContent = toReais(vlr_parc1);
+        detParcelas[1].children[2].textContent = toReais(vlr_parc1 * ALIQUOTA_DEBITO);
+        detParcelas[1].children[3].textContent = toReais(vlr_parc1 * ALIQUOTA_JUROS);
+    
+        detParcelas[2].children[1].textContent = toReais(vlr_parcs);
+        detParcelas[2].children[2].textContent = toReais(vlr_parcs * ALIQUOTA_DEBITO);
+        detParcelas[2].children[3].textContent = toReais(vlr_parcs * ALIQUOTA_JUROS);
     }
 }
 
@@ -496,29 +435,12 @@ const compSaldoAtual = document.getElementById('compSaldoAtual').children[1].chi
 
 compSaldoAtual[1].children[1].children[0].addEventListener('change', () => {
 
-    if(compSaldoAtual[1].children[1].children[0].value < 0){
-        document.getElementById('notification-mensage').innerHTML = "Error:<br>O número de parcelas pagas selecionado é menor que 0"
-        document.getElementById('notification-modal').style.display = 'flex';
-    }else{
-        closeNotification()
-    }
+    compSaldoAtual[2].children[1].textContent = calucarParcelasRestantes(compSaldoAtual[1].children[1].children[0].value, document.getElementById('qtsParcelas-input').value);
 
-    compSaldoAtual[2].children[1].textContent = calucarParcelasRestantes(compSaldoAtual[1].children[1].children[0].value,
-    document.getElementById('informacoesDoParcelamento').children[1].children[1].children[1].textContent);
-
-    const saldos = composicaoDosSaldosAtuais(
-        document.getElementById('informacoesDoParcelamento').children[1].children[4].children[1].textContent,
-        compSaldoAtual[0].children[1].children[0].value,
-        compSaldoAtual[1].children[1].children[0].value,
-        document.getElementById('informacoesContabeis').children[1].children[0].children[2].textContent,
-        document.getElementById('informacoesContabeis').children[1].children[3].children[2].textContent,
-        document.getElementById('informacoesDoParcelamento').children[1].children[1].children[1].textContent,
-        document.getElementById('informacoesDoParcelamento').children[1].children[2].children[1].textContent,
-        document.getElementById('informacoesDoParcelamento').children[1].children[3].children[1].textContent
-    )
+    const saldos = composicaoDosSaldosAtuais();
 
     compSaldoAtual[3].children[1].textContent = (isNaN(saldos.parcelasCP))? '0x': saldos.parcelasCP + 'x';
-    compSaldoAtual[3].children[2].textContent = toReais(saldos.valorCP);
+    compSaldoAtual[3].children[2].textContent = (isNaN(saldos.valorCP))? 'R$ 0,00': toReais(saldos.valorCP);
 
     if(isNaN(saldos.valorLP) || saldos.valorLP == 0){
         compSaldoAtual[4].style.display = 'none'
@@ -526,5 +448,78 @@ compSaldoAtual[1].children[1].children[0].addEventListener('change', () => {
         compSaldoAtual[4].style.display = ''
         compSaldoAtual[4].children[1].textContent = saldos.parcelasLP + 'x';
         compSaldoAtual[4].children[2].textContent = toReais(saldos.valorLP);
+    }
+
+    document.getElementById('notification-modal').style.display = 'flex';
+    if(compSaldoAtual[1].children[1].children[0].value < 0){
+        document.getElementById('notification-mensage').innerHTML = "Error:<br>O número de parcelas pagas selecionado é menor que 0"
+    }else if (parseInt(document.getElementById('compSaldoAtual').children[1].children[1].children[1].children[0].value) > saldos.PARCELAS){
+        document.getElementById('notification-mensage').innerHTML = "Error:<br>A quantidade de parcelas pagas é maior que a quantidade de parcelas disponíveis."
+    }else{closeNotification()}
+
+    function calucarParcelasRestantes(pagas, total){
+        return total - pagas;
+    }
+
+    function composicaoDosSaldosAtuais(){
+        valorCP = parseFloat(document.getElementById('informacoesContabeis').children[1].children[0].children[2].textContent.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
+        valorLP = parseFloat(document.getElementById('informacoesContabeis').children[1].children[3].children[2].textContent.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
+        valorParcela1 = parseFloat(document.getElementById('valorParcela1-input').value.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
+        valorParcelas = parseFloat(document.getElementById('valorParcelas-input').value.replace(/[^0-9,.]/g, '').replace('.', '').replace(',', '.'));
+        parcelasPagas = parseInt(document.getElementById('compSaldoAtual').children[1].children[1].children[1].children[0].value);
+        totalParcelas = parseInt(document.getElementById('qtsParcelas-input').value);
+      
+        let parcelas = 1;
+      
+        dataVencto1 = document.getElementById('venctoParcela1-input').value.split('-');
+        dataSaldo = document.getElementById('compSaldoAtual').children[1].children[0].children[1].children[0].value.split('-');
+      
+        parcelas += (dataSaldo[0] > dataVencto1[0])? (dataSaldo[0] - dataVencto1[0]) * 12: 0;
+        parcelas += dataSaldo[1] - dataVencto1[1]
+        parcelas = (parcelas > totalParcelas)? totalParcelas: parcelas;
+    
+        const QUANTIDADE_DE_PARCELAS_ATE_O_FIM_DO_PRIMEIRO_ANO = 12 - (dataVencto1[1] - 1);
+    
+        if(parcelas > QUANTIDADE_DE_PARCELAS_ATE_O_FIM_DO_PRIMEIRO_ANO && !isNaN(valorLP)){
+          if(valorLP >= (valorParcelas * 12)){
+            valorCP += (valorParcelas * 12);
+            valorLP -= (valorParcelas * 12);
+          }else{
+            valorCP += valorLP;
+            valorLP = 0;
+          }
+        }
+    
+        while(!validacaoCP() && !isNaN(valorLP)){
+          if (valorLP >= (valorParcelas * 12)){
+            valorCP += (valorParcelas * 12);
+            valorLP -= (valorParcelas * 12);
+          }else{
+            valorCP += valorLP;
+            valorLP = 0;
+            break;
+          }
+        }
+    
+        valorCP -= (parcelasPagas > 0) ? valorParcela1 + (valorParcelas * (parcelasPagas - 1)): 0;
+    
+        if(parcelasPagas > parcelas || parcelasPagas < 0){
+            valorCP = 0;
+            valorLP = 0;
+        }
+    
+        function validacaoCP(){
+          let CP = (Math.floor(((valorCP - valorParcela1) / valorParcelas) + 1) - QUANTIDADE_DE_PARCELAS_ATE_O_FIM_DO_PRIMEIRO_ANO) / 12;
+          let diferenca = CP - ((parcelas-QUANTIDADE_DE_PARCELAS_ATE_O_FIM_DO_PRIMEIRO_ANO) / 12);
+          return (diferenca < 1)? false: true;
+        }
+      
+        return {
+          valorCP: valorCP,
+          parcelasCP: (parcelasPagas == 0) ? Math.floor((valorCP - valorParcela1) / valorParcelas) + 1: Math.floor(valorCP / valorParcelas),
+          valorLP: valorLP,
+          parcelasLP: Math.floor(valorLP / valorParcelas),
+          PARCELAS: parcelas
+        }
     }
 });
