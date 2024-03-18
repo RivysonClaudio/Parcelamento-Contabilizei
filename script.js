@@ -77,6 +77,18 @@ $(document).ready(() => {
     $("#juros-input").mask('00.000.000,00', {reverse: true});
 });
 
+$('#addNewTaxRow').click(() => {
+    const debitosTable = document.getElementById('descricaoDosDebitos').children[1];
+    const newEmptyRow = document.createElement('tr');
+    for(let i = 0; i < 5; i++){
+        let newEmptyCell = document.createElement('td');
+        newEmptyCell.contentEditable = true;
+        newEmptyCell.style.outline = 'none';
+        newEmptyRow.appendChild(newEmptyCell);
+    }
+    debitosTable.appendChild(newEmptyRow);
+});
+
 function handleFile() {
 
     limparTabelas();
@@ -156,6 +168,9 @@ function displayText(text) {
         const descDesbitos = document.getElementById('descricaoDosDebitos');
         parcelamento.debitos.forEach((row) =>{
             let newRow = document.createElement('tr');
+            let tributoCell = document.createElement('td');
+            tributoCell.textContent = "Simples Nacional"
+            newRow.appendChild(tributoCell)
             row.forEach((cell) => {
                 let newCell = document.createElement('td');
                 newCell.textContent = cell;
