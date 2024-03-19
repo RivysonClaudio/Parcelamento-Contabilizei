@@ -75,6 +75,9 @@ $(document).ready(() => {
     $("#valorParcelas-input").mask('00.000.000,00', {reverse: true});
     $("#debito-input").mask('00.000.000,00', {reverse: true});
     $("#juros-input").mask('00.000.000,00', {reverse: true});
+    $(".competencia").mask('00/0000', {reverse: true});
+    $(".data").mask('00/00/0000', {reverse: true});
+    $(".moeda").mask('00.000.000,00', {reverse: true});
 });
 
 $('#addNewTaxRow').click(() => {
@@ -82,8 +85,11 @@ $('#addNewTaxRow').click(() => {
     const newEmptyRow = document.createElement('tr');
     for(let i = 0; i < 5; i++){
         let newEmptyCell = document.createElement('td');
-        newEmptyCell.contentEditable = true;
-        newEmptyCell.style.outline = 'none';
+        if(i == 0){newEmptyCell.appendChild(Object.assign(document.createElement('input'), {type: 'text', classList: 'Debitos', placeholder: 'Tributo'}))};
+        if(i == 1){newEmptyCell.appendChild(Object.assign(document.createElement('input'), {type: 'text', classList: 'competencia Debitos', placeholder: '00/0000'}))};
+        if(i == 2){newEmptyCell.appendChild(Object.assign(document.createElement('input'), {type: 'text', classList: 'data Debitos', placeholder: '00/00/0000'}))};
+        if(i == 3){newEmptyCell.appendChild(Object.assign(document.createElement('input'), {type: 'text', classList: 'moeda Debitos', placeholder: '0,00'}))};
+        if(i == 4){newEmptyCell.appendChild(Object.assign(document.createElement('input'), {type: 'text', classList: 'moeda Debitos', placeholder: '0,00'}))};
         newEmptyRow.appendChild(newEmptyCell);
     }
     debitosTable.appendChild(newEmptyRow);

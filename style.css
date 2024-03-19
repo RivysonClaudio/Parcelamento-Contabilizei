@@ -115,6 +115,14 @@ th,td{
     animation-duration: 0.5s;
 }
 
+.Debitos{
+    font-size: inherit;
+    outline: none;
+    border: none;
+    width: 100%;
+    text-align: center;
+}
+
 @keyframes animacao {
     from {left: -50vw;}
     to {left: 1vw;}
